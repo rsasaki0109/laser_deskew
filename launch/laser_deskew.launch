@@ -1,0 +1,4 @@
+<launch>
+   <param name="use_sim_time" value="true"/>
+   <node name="laser_deskew_node" pkg="laser_deskew"  type="laser_deskew_node" output="screen" />
+</launch>
