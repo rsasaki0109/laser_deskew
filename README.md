@@ -1,6 +1,11 @@
 # laser_deskew
 ros package for 2d laser deskew using tf.
 
+
+```
+rosrun laser_deskew laser_deskew_node
+```
+
 ## IO
 
 - input  

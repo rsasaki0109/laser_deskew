@@ -3,9 +3,10 @@
     LaserDeskew::LaserDeskew(tf::TransformListener* tf)
     {
         tf_ = tf;
-        nh_.getParam("laser_link", laser_frame_id_ );
+        nh_.param("laser_link", laser_frame_id_, std::string("laser_link"));
         scan_sub_ = nh_.subscribe("base_scan", 10, &LaserDeskew::ScanCallBack, this);
         deskewed_scan_pub_ = nh_.advertise<sensor_msgs::LaserScan>("/deskewed_scan", 10);
+        std::cout << "laser frame id:" << laser_frame_id_ << std::endl;
     }
 
     LaserDeskew::~LaserDeskew()
@@ -106,10 +107,10 @@
         int beam_number = angles.size();
 
         int interpolation_time_duration = 5 * 1000;//[ms]
-        tf::Stamped<tf::Pose> frame_start_pose;
-        tf::Stamped<tf::Pose> frame_mid_pose;
-        tf::Stamped<tf::Pose> frame_base_pose;
-        tf::Stamped<tf::Pose> frame_end_pose;
+        tf::Stamped<tf::Pose> start_pose;
+        tf::Stamped<tf::Pose> mid_pose;
+        tf::Stamped<tf::Pose> base_pose;
+        tf::Stamped<tf::Pose> end_pose;
 
         double start_time = startTime.toSec() * 1000 * 1000;//[us]
         double end_time = endTime.toSec() * 1000 * 1000;
@@ -117,24 +118,24 @@
 
         int start_index = 0;
 
-        if (!getLaserPose(frame_start_pose, ros::Time(start_time / (1000 * 1000)), tf_)) {
+        if (!getLaserPose(start_pose, ros::Time(start_time / (1000 * 1000)), tf_)) {
             ROS_WARN("Not get StartPose");
             return;
         }
 
-        if (!getLaserPose(frame_end_pose, ros::Time(end_time / (1000 * 1000)), tf_)) {
+        if (!getLaserPose(end_pose, ros::Time(end_time / (1000 * 1000)), tf_)) {
             ROS_WARN("Not get EndPose");
             return;
         }
 
         int cnt = 0;
-        frame_base_pose = frame_start_pose;
+        base_pose = start_pose;
         for (int i = 0; i < beam_number; i++) {
             double mid_time = start_time + time_inc * (i - start_index);
             if (mid_time - start_time > interpolation_time_duration || (i == beam_number - 1)) {
                 cnt++;
 
-                if (!getLaserPose(frame_mid_pose, ros::Time(mid_time / 1000000.0), tf_)) {
+                if (!getLaserPose(mid_pose, ros::Time(mid_time / 1000000.0), tf_)) {
                     ROS_ERROR("Mid %d Pose Error", cnt);
                     return;
                 }
@@ -144,15 +145,15 @@
                 calibrateLaserMotion(
                     ranges,
                     angles,
-                    frame_base_pose,
-                    frame_start_pose,
-                    frame_mid_pose,
+                    base_pose,
+                    start_pose,
+                    mid_pose,
                     start_index,
                     interp_cnt);
 
                 start_time = mid_time;
                 start_index = i;
-                frame_start_pose = frame_mid_pose;
+                start_pose = mid_pose;
             }
         }
     }
