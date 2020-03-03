@@ -163,19 +163,20 @@
         std::vector<float>& ranges,
         std::vector<double>& angles)
     {
-        sort( ranges.begin(), ranges.end() );
-        float range_max = ranges.back();
-        float range_min = ranges.front();
-
+        
         sensor_msgs::LaserScan deskewed_scan_msg;
         deskewed_scan_msg.header = scan_msg->header;
         deskewed_scan_msg.angle_min = angles[0];
         deskewed_scan_msg.angle_max  = angles[angles.size()-1];
         deskewed_scan_msg.time_increment = scan_msg->time_increment;
         deskewed_scan_msg.scan_time = scan_msg->scan_time;
+        deskewed_scan_msg.ranges = ranges;
+        sort( ranges.begin(), ranges.end() );
+        float range_max = ranges.back();
+        float range_min = ranges.front();
         deskewed_scan_msg.range_min = range_min;
         deskewed_scan_msg.range_max = range_max;
-        deskewed_scan_msg.ranges = ranges;
+        
         deskewed_scan_msg.intensities = scan_msg->intensities;
         double angle_min = angles[0];
         double angle_max  = angles[angles.size()-1];
