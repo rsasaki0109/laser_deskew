@@ -31,3 +31,5 @@ rosbag play Mapping1.bag --clock
 
 <img src="./images/deskew.gif" width="640px">
 
+Green: deskewed scan, Red: input scan
+
