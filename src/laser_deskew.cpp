@@ -3,7 +3,7 @@
     LaserDeskew::LaserDeskew(tf::TransformListener* tf)
     {
         tf_ = tf;
-        nh_.param("laser_link", laser_frame_id_, std::string("laser_link"));
+        nh_.param("laser_link", laser_frame_id_, std::string("base_laser_link"));
         scan_sub_ = nh_.subscribe("base_scan", 10, &LaserDeskew::ScanCallBack, this);
         deskewed_scan_pub_ = nh_.advertise<sensor_msgs::LaserScan>("/deskewed_scan", 10);
         std::cout << "laser frame id:" << laser_frame_id_ << std::endl;
@@ -170,6 +170,7 @@
         deskewed_scan_msg.angle_max  = angles[angles.size()-1];
         deskewed_scan_msg.time_increment = scan_msg->time_increment;
         deskewed_scan_msg.scan_time = scan_msg->scan_time;
+        //std::reverse(ranges.begin(), ranges.end());   
         deskewed_scan_msg.ranges = ranges;
         sort( ranges.begin(), ranges.end() );
         float range_max = ranges.back();
@@ -181,12 +182,13 @@
         double angle_min = angles[0];
         double angle_max  = angles[angles.size()-1];
         if (angle_max > angle_min) {
-            angle_min =  M_PI - angle_max;
-            angle_max =  M_PI - angle_min;
+        //if (angle_max < angle_min) {
+            angle_min =  -(M_PI - angle_max);
+            angle_max =  -(M_PI - angle_min);
         } 
         else {
-            angle_min =  M_PI - angle_min;
-            angle_max =  M_PI - angle_max;
+            angle_min =  -(M_PI - angle_min);
+            angle_max =  -(M_PI - angle_max);
         }
         deskewed_scan_msg.angle_increment =(angle_max - angle_min)/(double)(angles.size()-1);
         deskewed_scan_pub_.publish(deskewed_scan_msg);
