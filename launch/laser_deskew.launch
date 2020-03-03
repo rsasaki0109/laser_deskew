@@ -1,4 +1,8 @@
 <launch>
    <param name="use_sim_time" value="true"/>
-   <node name="laser_deskew_node" pkg="laser_deskew"  type="laser_deskew_node" output="screen" />
+   <node pkg="tf" type="static_transform_publisher" name="transform_publisher" args="0 0 0 0 0 0 /base_link /base_laser_link 10" />
+   <node name="laser_deskew_node" pkg="laser_deskew"  type="laser_deskew_node" output="screen" >
+      <param name="laser_link" value="base_laser_link" />
+   </node>
+   <node name="odom2tf" pkg="laser_deskew"  type="odom2tf" output="screen" />
 </launch>

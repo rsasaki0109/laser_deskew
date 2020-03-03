@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 
     tf::TransformListener tf(ros::Duration(10.0));
 
-    LaserDeskew tmp(&tf);
+    LaserDeskew ld(&tf);
 
     ros::spin();
     return 0;

@@ -35,3 +35,6 @@ target_link_libraries(${PROJECT_NAME}_node
   ${PCL_LIBRARIES}
  )
 
+add_executable(odom2tf src/odom2tf.cpp)
+target_link_libraries(odom2tf ${catkin_LIBRARIES})
+add_dependencies(odom2tf ${catkin_EXPORTED_TARGETS})
