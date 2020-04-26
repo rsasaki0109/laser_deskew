@@ -27,7 +27,7 @@ jobs:
               run: |
                   source /opt/ros/melodic/setup.bash
                   cd ~/catkin_ws/src
-                  rosdep install -r -y --from-paths . --ignore-src
+                  sudo rosdep install -r -y --from-paths . --ignore-src
             - name: Build packages
               run: |
                   source /opt/ros/melodic/setup.bash
