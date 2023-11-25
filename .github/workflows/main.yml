@@ -5,19 +5,19 @@ on: pull_request
 jobs:
     job1:
         name: Build
-        runs-on: ubuntu-20.04  # Updated to Ubuntu 20.04 for ROS Noetic
+        runs-on: ubuntu-20.04
         steps:
             - name: Install ROS
               run: |
                   sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
                   sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
                   sudo apt-get update -qq
-                  sudo apt-get install ros-noetic-desktop-full -y  # Updated to ROS Noetic
-                  sudo apt install python3-pip  # Updated to Python3
-                  sudo -H pip3 install rosdep  # Updated to pip3
+                  sudo apt-get install ros-noetic-desktop-full -y
+                  sudo apt install python3-pip 
+                  sudo -H pip3 install rosdep
                   sudo rosdep init
                   sudo rosdep update
-                  source /opt/ros/noetic/setup.bash  # Updated to ROS Noetic
+                  source /opt/ros/noetic/setup.bash
             - name: Clone repository
               run: |
                   mkdir -p ~/catkin_ws/src
@@ -25,12 +25,12 @@ jobs:
                   git clone https://github.com/rsasaki0109/laser_deskew
             - name: Install dependencies
               run: |
-                  source /opt/ros/noetic/setup.bash  # Updated to ROS Noetic
+                  source /opt/ros/noetic/setup.bash
                   cd ~/catkin_ws/src
                   sudo rosdep install -r -y --from-paths . --ignore-src
             - name: Build packages
               run: |
-                  source /opt/ros/noetic/setup.bash  # Updated to ROS Noetic
+                  source /opt/ros/noetic/setup.bash
                   cd ~/catkin_ws
                   catkin_make -j4
                   source ~/catkin_ws/devel/setup.bash
