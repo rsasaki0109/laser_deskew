@@ -20,12 +20,13 @@ jobs:
                   git clone https://github.com/rsasaki0109/laser_deskew
             - name: Install dependencies
               run: |
-                  source /opt/ros/noetic/setup.bash
-                  cd ~/catkin_ws/src
-                  rosdep update
-                  rosdep install -r -y --from-paths . --ignore-src
-                  apt-get install -y ros-noetic-tf
-                  apt-get install -y ros-noetic-pcl-ros
+                source /opt/ros/noetic/setup.bash
+                cd ~/catkin_ws/src
+                rosdep update
+                rosdep install -r -y --from-paths . --ignore-src
+                DEBIAN_FRONTEND=noninteractive apt-get update
+                DEBIAN_FRONTEND=noninteractive apt-get install -y ros-noetic-tf ros-noetic-pcl-ros
+                rm -rf /var/lib/apt/lists/*
               shell: bash
             - name: Install build tools
               run: |
