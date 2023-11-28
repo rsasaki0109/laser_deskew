@@ -6,7 +6,7 @@ jobs:
     job1:
         name: Build
         runs-on: ubuntu-20.04
-        container: ros:noetic-ros-core
+        container: ros:noetic
         steps:
             - name: Install Git
               run: |
@@ -22,9 +22,6 @@ jobs:
               run: |
                   source /opt/ros/noetic/setup.bash
                   cd ~/catkin_ws/src
-                  apt-get install -y python3-rosdep
-                  rosdep init
-                  rosdep update
                   rosdep install -r -y --from-paths . --ignore-src
                   apt-get install -y ros-noetic-tf
                   apt-get install -y ros-noetic-pcl-ros
