@@ -22,6 +22,7 @@ jobs:
               run: |
                   source /opt/ros/noetic/setup.bash
                   cd ~/catkin_ws/src
+                  rosdep update
                   rosdep install -r -y --from-paths . --ignore-src
                   apt-get install -y ros-noetic-tf
                   apt-get install -y ros-noetic-pcl-ros
