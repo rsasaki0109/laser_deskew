@@ -1,23 +1,18 @@
-name: Melodic
+name: Noetic
 
 on: pull_request
 
 jobs:
     job1:
         name: Build
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
+        container: ros:noetic
         steps:
-            - name: Install ROS
+            - name: Install Git
               run: |
-                  sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-                  sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-                  sudo apt-get update -qq
-                  sudo apt-get install ros-melodic-desktop-full -y
-                  sudo apt install python-pip
-                  sudo -H pip install rosdep
-                  sudo rosdep init
-                  sudo rosdep update
-                  source /opt/ros/melodic/setup.bash
+                  apt-get update
+                  apt-get install -y git
+              shell: bash
             - name: Clone repository
               run: |
                   mkdir -p ~/catkin_ws/src
@@ -25,12 +20,21 @@ jobs:
                   git clone https://github.com/rsasaki0109/laser_deskew
             - name: Install dependencies
               run: |
-                  source /opt/ros/melodic/setup.bash
-                  cd ~/catkin_ws/src
-                  sudo rosdep install -r -y --from-paths . --ignore-src
+                source /opt/ros/noetic/setup.bash
+                cd ~/catkin_ws/src
+                rosdep update
+                rosdep install -r -y --from-paths . --ignore-src
+                DEBIAN_FRONTEND=noninteractive apt-get update
+                DEBIAN_FRONTEND=noninteractive apt-get install -y ros-noetic-tf ros-noetic-pcl-ros
+                rm -rf /var/lib/apt/lists/*
+              shell: bash
+            - name: Install build tools
+              run: |
+                  apt-get install -y build-essential
             - name: Build packages
               run: |
-                  source /opt/ros/melodic/setup.bash
+                  source /opt/ros/noetic/setup.bash
                   cd ~/catkin_ws
                   catkin_make -j4
                   source ~/catkin_ws/devel/setup.bash
+              shell: bash
